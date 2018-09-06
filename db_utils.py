@@ -80,7 +80,7 @@ class Filter(object):
         """
         for f, o, v in filter_list:
             if isinstance(v, str) and o.lower() != 'in':
-                item = f + o + "'%s'"%v
+                item = f + ' ' + o + ' ' + "'%s'"%v
             elif o.lower() == 'in':
                 if not isinstance(v,(list,tuple)):
                     v = list(v)
@@ -90,7 +90,7 @@ class Filter(object):
                 else:
                     item = f + ' ' + o + '(' + ','.join('%s'%i for i in v) + ')'
             else:
-                item = f + o + "%s"%v
+                item = f + ' ' + o + ' ' + "%s"%v
             yield item
 
 
