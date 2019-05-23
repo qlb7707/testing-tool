@@ -4,8 +4,9 @@ Simple database utility tool, support basic 'insert', 'delete','select','update'
 and support basic filter in SQL with '+' and '|' operation
 """
 import MySQLdb
+import sys
 
-__all__ = ['set_db_debug', 'db_debug', 'show_db_debug', 'Filter', 'Mydb']
+__all__ = ['set_db_debug', 'db_debug', 'show_db_debug', 'Filter', 'Mydb', 'Function']
 
 _db_debug = False
 
@@ -16,7 +17,7 @@ def set_db_debug(flag=False):
 def _print(message):
     global _db_debug
     if _db_debug == True:
-        print message
+        print(message)
 
 def db_debug(message, *args):
     _print(message % args)
@@ -24,7 +25,19 @@ def db_debug(message, *args):
 
 def show_db_debug():
     global _db_debug
-    print _db_debug
+    print(_db_debug)
+
+class Function(object):
+    _scope = ['key', 'value']
+    def __init__(self, name, val, scope='value'):
+        self.name = name
+        self.val = val
+        self.scope = scope
+    def __repr__(self):
+        if isinstance(self.val, str) and scope == 'value':
+            return self.name + '(' + "'%s'"%self.val + ')'
+        else:
+            return self.name + '(' + self.val + ')'
 
 class Filter(object):
     """
@@ -96,8 +109,8 @@ class Filter(object):
 
 
 class Mydb(object):
-    def __init__(self, db_name, user_name, passwd):
-        self.db = MySQLdb.connect(host='localhost', user=user_name, passwd=passwd, db=db_name, charset='utf8')
+    def __init__(self, db_name, user_name, passwd, host='localhost'):
+        self.db = MySQLdb.connect(host, user=user_name, passwd=passwd, db=db_name, charset='utf8')
         self.cursor=self.db.cursor()
 
     def insert(self, table_name=None, repeat=1, **attr):
@@ -112,8 +125,8 @@ class Mydb(object):
         cols = ','.join(i for i,j in zip(keys,values) if j != None)
         vals = ','.join(Mydb.process_value(i) for i in values if i != None)
         SQL = SQL_FMT%(table_name,cols,vals)
-        db_debug(SQL)
         for i in xrange(repeat):
+            db_debug(SQL)
             self.cursor.execute(SQL)
         self.db.commit()
 
@@ -208,14 +221,14 @@ if __name__ == '__main__':
     ##select
     rows = db.select(table_name='threat_event_tbl',attr=['event_name','is_ioc']
     , filter=Filter('defender_id','=',5))
-    print len(rows)
+    print(len(rows))
     rows = db.select(table_name='threat_event_tbl',attr=['event_name','is_ioc']
     , filter=Filter('defender_id','=',5) + (Filter('event_name', 'in', ['http','smb']) |
     Filter('is_ioc','=',0)) + Filter('confidence','>',50))
-    print len(rows)
+    print(len(rows))
     rows = db.select(table_name='threat_event_tbl'
     ,filter=Filter([('defender_id','=',5),('confidence','>', 50)]))
-    print len(rows)
+    print(len(rows))
     ##update
     db.update(table_name='threat_event_tbl',priv_data='python-db-update'
     , filter=Filter('confidence','=',100) + Filter('is_ioc','=', 1))
