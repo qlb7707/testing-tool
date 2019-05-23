@@ -217,7 +217,7 @@ class Mydb(object):
 
 
 if __name__ == '__main__':
-    db = Mydb(db_name='risk_mgmt_db', user_name='root', passwd='hillstone')
+    db = Mydb(db_name='risk_mgmt_db', user_name='root', passwd='xxx')
     ##select
     rows = db.select(table_name='threat_event_tbl',attr=['event_name','is_ioc']
     , filter=Filter('defender_id','=',5))

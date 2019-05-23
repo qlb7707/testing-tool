@@ -100,7 +100,7 @@ def gen_random_threat_with_dst(ip, type):
     return threat
 
 def prepareAssetThreatTbl(assetCnt, eventCnt):
-    db = Mydb(host='10.180.171.233', user_name='hillstone', passwd='hIllstoneBdap4Ever', db_name='bdap')
+    db = Mydb(host='10.180.171.233', user_name='xxx', passwd='hIllstoneBdap4Ever', db_name='bdap')
     db.delete('asset_threat_tbl')
     producer = MyProducer()
     topic = 'threat-event'
